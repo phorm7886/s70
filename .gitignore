@@ -45,7 +45,7 @@ crashlytics-build.properties
 fabric.properties
 
 .idea/*.*
-/.vs/
+.vs/*.*
 *.config
 *.suo
 *.sqlite
