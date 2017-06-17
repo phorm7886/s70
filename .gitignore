@@ -44,7 +44,9 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-.idea/misc.xml
-.idea/modules.xml
-.idea/s70.iml
-.idea/vcs.xml
+.idea/*.*
+/.vs/
+*.config
+*.suo
+*.sqlite
+
