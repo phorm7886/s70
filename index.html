@@ -1,38 +1,79 @@
 ﻿<html>
 <head></head>
 <body>
-  <section id="todo">
-    <form>
-      <input type="text" />
-      <input type="submit" />
-    </form>
-    <section>
-      <h1>진행</h1>
-      <ul class="progress">
-      <li>
-        <p>할 일</p>
-        <input type="button" value="완료" />
-        <input type="button" value="삭제" />
-      </li>
-    </ul>
+    <section id="todo">
+        <form class="add">
+            <input type="text" class="title" />
+            <input type="submit" />
+        </form>
+        <section>
+            <h1>진행</h1>
+            <ul class="progress">
+                <li>
+                    <p>할 일</p>
+                    <input type="button" value="완료" />
+                    <input type="button" value="삭제" />
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h1>완료</h1>
+            <ul class="complete">
+                <li>
+                    <p>할 일</p>
+                    <input type="button" value="진행" />
+                    <input type="button" value="삭제" />
+                </li>
+            </ul>
+        </section>
     </section>
-    <section>
-      <h1>완료</h1>
-      <ul class="complete">
-      <li>
-        <p>할 일</p>
-        <input type="button" value="진행" />
-        <input type="button" value="삭제" />
-      </li>
-    </ul>
-    </section>
-  </section>
-  <script src="renderer.js"></script>
-  <script src="html.js"></script>
-  <script src="con1.js"></script>
-  <script src="todo.js"></script>
-  <script>
-    todo.setRenderer(html);
-  </script>
+    <script src="state.js"></script>
+    <script src="task.js"></script>
+    <script src="list.js"></script>
+    <script src="todo.js"></script>
+    <script src="renderer.js"></script>
+    <script src="html.js"></script>
+    <script>
+        var HtmlList = function (el, li, add) {
+            this._el = el;
+            this._li = li;
+            if (typeof add === 'function') this.add = add;
+        };
+        HtmlList.prototype = new TODO.List();
+        HtmlList.prototype._init = function () {
+            var li;
+            this._el = document.querySelector(this._el);
+            this._li = li = document.querySelector(this._li);
+            if (li.parentNode) li.parentNode.removeChild(li);
+        };
+        HtmlList.prototype._clear = function () {
+            this._el.innerHTML = '';
+        };
+        HtmlList.prototype._add = function (task) {
+            var child = this._li.cloneNode(true);
+            child.querySelector('p').innerHTML = task;
+            var inputs = child.querySelectorAll('input');
+            var todo = this._todo;
+            inputs[0].onclick = function () {
+                todo.toggle(task);
+            };
+            inputs[1].onclick = function () {
+                todo.remove(task);
+            };
+            this._el.appendChild(child);
+        };
+        (new TODO.Todo()).setRenderer(new TODO.Html(
+            function (todo) {
+                var title = document.querySelector('#todo .title');
+                document.querySelector('#todo .add').onsubmit = function () {
+                    todo.add(title.value);
+                    title.value = '';
+                    return false;
+                };
+            },
+            new HtmlList('#todo .progress', '#todo .progress li'),
+            new HtmlList('#todo .complete', '#todo .complete li')
+        ));
+    </script>
 </body>
 </html>
